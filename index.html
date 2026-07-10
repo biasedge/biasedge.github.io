@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hi-Ai Systems — Custom Trading Tools</title>
+<meta name="description" content="Custom ThinkScript, Pine Script, dashboards and broker API integrations. Your logic, engineered. Fixed price. No signals, no promises, no course.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B1220; --ink2:#101B2E; --panel:#111D33;
+    --teal:#2DD4BF; --teal-dim:#1B8578;
+    --coral:#F0655A;
+    --text:#EDF2F7; --muted:#8A97AB; --faint:#5C6A80;
+    --line:#22314D;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} *{animation:none!important;transition:none!important} }
+  body{
+    background:linear-gradient(180deg,var(--ink) 0%,var(--ink2) 100%);
+    color:var(--text);
+    font-family:'Inter',system-ui,sans-serif;
+    font-size:17px; line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:920px;margin:0 auto;padding:0 24px}
+  a{color:var(--teal)}
+  a:focus-visible,button:focus-visible{outline:2px solid var(--teal);outline-offset:3px}
+
+  /* ---------- hero ---------- */
+  header{padding:88px 0 56px;text-align:center}
+  .lockup{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:6px}
+  .lockup .word{font-family:'Space Grotesk';font-weight:700;font-size:34px;letter-spacing:.5px}
+  .lockup svg{display:block}
+  .systems{font-size:13px;font-weight:600;letter-spacing:.42em;color:var(--muted);text-transform:uppercase;margin-bottom:64px}
+  h1{font-family:'Space Grotesk';font-weight:700;font-size:clamp(44px,8vw,76px);line-height:1.05;letter-spacing:-.01em}
+  h1 .dim{color:var(--muted)}
+  .sub{max-width:560px;margin:28px auto 0;color:var(--muted);font-size:19px}
+  .sub strong{color:var(--text);font-weight:600}
+  .cta-row{margin-top:40px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+  .btn{display:inline-block;padding:15px 34px;border-radius:32px;font-weight:600;font-size:17px;text-decoration:none;transition:transform .15s ease}
+  .btn:hover{transform:translateY(-1px)}
+  .btn-primary{background:var(--teal);color:#07121f}
+  .btn-ghost{border:1px solid var(--line);color:var(--text)}
+  .kicker{margin-top:26px;font-size:14px;color:var(--faint);letter-spacing:.04em}
+
+  /* ---------- candle divider: capitulation -> turn -> run ---------- */
+  .divider{padding:34px 0 10px;text-align:center;overflow:hidden}
+  .divider svg{max-width:520px;width:90%;height:auto;opacity:.9}
+
+  /* ---------- sections ---------- */
+  section{padding:64px 0}
+  .eyebrow{font-size:13px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--teal);margin-bottom:14px}
+  h2{font-family:'Space Grotesk';font-weight:700;font-size:clamp(28px,4.5vw,40px);letter-spacing:-.01em;margin-bottom:14px}
+  .lede{color:var(--muted);max-width:620px}
+
+  /* packages */
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;margin-top:44px}
+  .card{
+    background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    padding:30px 28px;display:flex;flex-direction:column;
+  }
+  .card h3{font-family:'Space Grotesk';font-size:21px;font-weight:700;margin-bottom:4px}
+  .price{font-family:'Space Grotesk';font-size:34px;font-weight:700;color:var(--teal);margin:10px 0 16px}
+  .price small{font-size:15px;color:var(--faint);font-family:'Inter';font-weight:500}
+  .card p{color:var(--muted);font-size:15.5px;flex:1}
+  .scope{margin-top:18px;padding-top:16px;border-top:1px solid var(--line);font-size:13.5px;color:var(--faint)}
+
+  /* process — a real sequence, numbering earns its place */
+  .steps{margin-top:40px;display:grid;gap:0}
+  .step{display:grid;grid-template-columns:64px 1fr;gap:22px;padding:26px 0;border-top:1px solid var(--line)}
+  .step:last-child{border-bottom:1px solid var(--line)}
+  .step .n{font-family:'Space Grotesk';font-weight:700;font-size:30px;color:var(--teal-dim)}
+  .step h3{font-family:'Space Grotesk';font-size:19px;margin-bottom:6px}
+  .step p{color:var(--muted);font-size:15.5px}
+
+  /* the results answer */
+  .quote{
+    margin-top:40px;background:var(--panel);border-left:3px solid var(--teal);
+    border-radius:0 12px 12px 0;padding:34px 36px;
+  }
+  .quote p{font-size:19px;line-height:1.7}
+  .quote .who{margin-top:16px;font-size:14px;color:var(--faint);letter-spacing:.05em}
+
+  /* footer */
+  footer{padding:64px 0 48px;border-top:1px solid var(--line);margin-top:40px;text-align:center}
+  .foot-lockup{display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:14px}
+  .foot-lockup .word{font-family:'Space Grotesk';font-weight:700;font-size:19px}
+  footer .tag{color:var(--muted);font-size:15px;margin-bottom:22px}
+  footer .fine{color:var(--faint);font-size:13px;max-width:560px;margin:0 auto;line-height:1.7}
+  footer .contact{margin:20px 0 26px;font-size:15px}
+</style>
+</head>
+<body>
+
+<header class="wrap">
+  <div class="lockup" aria-label="Hi infinity Ai">
+    <span class="word">Hi</span>
+    <svg width="58" height="30" viewBox="0 0 58 30" fill="none" aria-hidden="true">
+      <circle cx="17" cy="15" r="11" stroke="#2DD4BF" stroke-width="5"/>
+      <circle cx="41" cy="15" r="11" stroke="#2DD4BF" stroke-width="5"/>
+    </svg>
+    <span class="word">Ai</span>
+  </div>
+  <div class="systems">Systems</div>
+
+  <h1>No Lambo.<br><span class="dim">Just code that works.</span></h1>
+  <p class="sub"><strong>Custom trading tools. Your logic, engineered.</strong><br>
+  ThinkScript &amp; Pine Script indicators, live dashboards, and broker API integrations —
+  built to your spec, validated in simulation, delivered at a fixed price.</p>
+
+  <div class="cta-row">
+    <a class="btn btn-primary" href="#packages">See the packages</a>
+    <a class="btn btn-ghost" href="mailto:biasedgesystems@gmail.com">Start a build</a>
+  </div>
+  <p class="kicker">No signals. No promises. No course.</p>
+</header>
+
+<!-- signature: the turn, drawn -->
+<div class="divider" aria-hidden="true">
+  <svg viewBox="0 0 520 90" fill="none">
+    <!-- capitulation -->
+    <line x1="30" y1="18" x2="30" y2="52" stroke="#F0655A" stroke-width="2"/>
+    <rect x="24" y="22" width="12" height="22" rx="2" fill="#8C3732" stroke="#F0655A"/>
+    <line x1="70" y1="26" x2="70" y2="64" stroke="#F0655A" stroke-width="2"/>
+    <rect x="64" y="30" width="12" height="28" rx="2" fill="#8C3732" stroke="#F0655A"/>
+    <line x1="110" y1="36" x2="110" y2="80" stroke="#F0655A" stroke-width="2"/>
+    <rect x="104" y="40" width="12" height="34" rx="2" fill="#8C3732" stroke="#F0655A"/>
+    <!-- the turn: two-sided wick -->
+    <circle cx="165" cy="58" r="24" stroke="#2DD4BF" stroke-opacity=".55" stroke-width="2"/>
+    <line x1="165" y1="34" x2="165" y2="82" stroke="#2DD4BF" stroke-width="2.5"/>
+    <rect x="159" y="54" width="12" height="9" rx="2" fill="#0E1E2C" stroke="#2DD4BF" stroke-width="2"/>
+    <!-- the run -->
+    <line x1="215" y1="40" x2="215" y2="68" stroke="#2DD4BF" stroke-width="2"/>
+    <rect x="209" y="44" width="12" height="20" rx="2" fill="#14786C" stroke="#2DD4BF"/>
+    <line x1="255" y1="30" x2="255" y2="58" stroke="#2DD4BF" stroke-width="2"/>
+    <rect x="249" y="34" width="12" height="20" rx="2" fill="#14786C" stroke="#2DD4BF"/>
+    <line x1="295" y1="20" x2="295" y2="48" stroke="#2DD4BF" stroke-width="2"/>
+    <rect x="289" y="24" width="12" height="18" rx="2" fill="#14786C" stroke="#2DD4BF"/>
+    <line x1="335" y1="12" x2="335" y2="38" stroke="#2DD4BF" stroke-width="2"/>
+    <rect x="329" y="16" width="12" height="16" rx="2" fill="#14786C" stroke="#2DD4BF"/>
+    <!-- level line it ran to -->
+    <line x1="365" y1="14" x2="500" y2="14" stroke="#8A97AB" stroke-width="1.5" stroke-dasharray="6 6"/>
+  </svg>
+</div>
+
+<section id="packages" class="wrap">
+  <div class="eyebrow">Fixed price. Fixed scope.</div>
+  <h2>Three ways to build</h2>
+  <p class="lede">Every build is quoted before work starts, tested before delivery, and includes one revision round. 50% up front, 50% on delivery.</p>
+
+  <div class="cards">
+    <div class="card">
+      <h3>Custom Indicator</h3>
+      <div class="price">$197 <small>ThinkScript or Pine Script</small></div>
+      <p>One custom indicator or scan built to your spec — signals, plots, alerts, custom visuals.
+      Delivered paste-ready with a plain-English guide to every input.
+      Pine builds can add a strategy-script conversion (+$150) so TradingView's own
+      backtester reports on <em>your</em> logic.</p>
+      <div class="scope">One indicator · one revision included · 3–5 days</div>
+    </div>
+    <div class="card">
+      <h3>Dashboard / Scanner</h3>
+      <div class="price">$697</div>
+      <p>A live browser dashboard or scanner on your own machine — real-time levels,
+      watchlist tables, alert panels. Python backend, clean front end,
+      setup call included to get it running on your PC.</p>
+      <div class="scope">Up to 10 tickers · one data source · 7–10 days</div>
+    </div>
+    <div class="card">
+      <h3>Broker API Integration</h3>
+      <div class="price">$1,495</div>
+      <p>Your broker's API wired into a working pipeline — authentication with automatic
+      token refresh, live quotes or options-chain data. Documented running code
+      plus a walkthrough call. Schwab, Tastytrade, Tradier.</p>
+      <div class="scope">One broker · market data (read-only) · 2–3 weeks</div>
+    </div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="eyebrow">How a build works</div>
+  <h2>Spec. Simulate. Deliver.</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="n">1</div>
+      <div>
+        <h3>Spec it in plain English</h3>
+        <p>You describe what the tool should show and when it should alert — sketches and
+        chart screenshots welcome. I write the scope in one paragraph and quote a fixed price
+        before any work starts. No hourly billing, ever.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="n">2</div>
+      <div>
+        <h3>Logic validated in simulation first</h3>
+        <p>Before your indicator touches a chart, the logic runs against test data in Python —
+        state machines, alerts, edge cases. Most custom indicators break because nobody tested
+        them. Yours arrives already proven to do what the spec says.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="n">3</div>
+      <div>
+        <h3>Delivered working, explained plainly</h3>
+        <p>Paste-ready code, a guide to every input, and one revision round included.
+        Dashboards and API builds include a setup call so it runs on your machine before
+        we're done.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="eyebrow">The question everyone asks</div>
+  <h2>"What are your trading results?"</h2>
+  <div class="quote">
+    <p>I don't sell performance and I won't show you a P&amp;L. Anyone who uses a P&amp;L
+    screenshot to sell you an indicator is selling you the screenshot, not the code.
+    What I'll show you is working software: the build runs, the logic matches your spec,
+    and I prove it in simulation before you get it. Whether your strategy makes money is —
+    and should be — entirely in your hands. I just make sure the tool does exactly what
+    you designed.</p>
+    <div class="who">— the only honest answer in this business</div>
+  </div>
+</section>
+
+<footer class="wrap">
+  <div class="foot-lockup" aria-hidden="true">
+    <span class="word">Hi</span>
+    <svg width="36" height="19" viewBox="0 0 58 30" fill="none">
+      <circle cx="17" cy="15" r="11" stroke="#2DD4BF" stroke-width="5"/>
+      <circle cx="41" cy="15" r="11" stroke="#2DD4BF" stroke-width="5"/>
+    </svg>
+    <span class="word">Ai</span>
+  </div>
+  <div class="tag">Your edge. My engineering. Nobody's Lamborghini.</div>
+  <div class="contact">
+    <a href="mailto:biasedgesystems@gmail.com">biasedgesystems@gmail.com</a>
+  </div>
+  <p class="fine">Hi-Ai Systems is the working name of an independent software developer
+  based in Arizona. Custom software development services only.
+  Nothing on this page is trading advice, a signal service, or a promise of profit.
+  Futures and options trading involves substantial risk of loss.</p>
+</footer>
+
+</body>
+</html>
